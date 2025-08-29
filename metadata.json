@@ -1,0 +1,5 @@
+{
+  "name": "Legal Eagle: Document Interpreter",
+  "description": "An AI-powered assistant to help you understand complex legal documents. Upload a PDF of a law or contract, and ask questions in plain English to get clear, easy-to-understand interpretations of the legal jargon.",
+  "requestFramePermissions": []
+}
