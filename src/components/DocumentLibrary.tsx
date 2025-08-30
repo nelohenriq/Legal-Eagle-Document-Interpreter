@@ -18,7 +18,8 @@ const DocumentLibrary: React.FC<SidebarProps> = ({
   documents, activeDocument, onSelect, onDelete, onFileUpload, 
   onProviderChange, currentProvider, onThemeToggle, theme
 }) => {
-  const documentEntries = Object.entries(documents);
+  // FIX: Explicitly type `documentEntries` to prevent `chunks` from being inferred as `unknown`.
+  const documentEntries: [string, DocumentChunk[]][] = Object.entries(documents);
 
   const handleDelete = (e: React.MouseEvent, fileName: string) => {
     e.stopPropagation();

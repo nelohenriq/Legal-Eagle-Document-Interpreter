@@ -10,14 +10,13 @@ interface SidebarProps {
   onFileUpload: (file: File) => void;
   onProviderChange: (provider: AIProvider) => void;
   currentProvider: AIProvider;
-  onShowSettings: (provider: AIProvider) => void;
   onThemeToggle: () => void;
   theme: 'light' | 'dark';
 }
 
 const DocumentLibrary: React.FC<SidebarProps> = ({ 
   documents, activeDocument, onSelect, onDelete, onFileUpload, 
-  onProviderChange, currentProvider, onShowSettings, onThemeToggle, theme
+  onProviderChange, currentProvider, onThemeToggle, theme
 }) => {
   const documentEntries = Object.entries(documents);
 
@@ -58,7 +57,7 @@ const DocumentLibrary: React.FC<SidebarProps> = ({
   };
   
   return (
-    <aside className="w-full md:w-80 lg:w-96 flex-shrink-0 bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col h-screen">
+    <aside className="w-full md:w-80 lg:w-96 flex-shrink-0 bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col md:h-full">
       <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex-shrink-0 h-16 flex items-center justify-between">
         <h2 className="text-lg font-bold">Biblioteca</h2>
         <label htmlFor="new-document-upload" className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors cursor-pointer">

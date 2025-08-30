@@ -8,7 +8,6 @@ import ChatInterface from './components/ChatInterface';
 import DocumentLibrary from './components/DocumentLibrary';
 import ApiKeySetup from './components/ApiKeySetup';
 import OllamaSetup from './components/OllamaSetup';
-import ReferencePanel from './components/ReferencePanel';
 import { FileIcon, BrainCircuitIcon, ScalesIcon, AlertTriangleIcon, CogIcon, MoonIcon, SunIcon, XIcon, PlusIcon } from './components/Icons';
 
 const App: React.FC = () => {
@@ -23,7 +22,6 @@ const App: React.FC = () => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [savedDocuments, setSavedDocuments] = useState<SavedDocuments>({});
   const [showSettingsModal, setShowSettingsModal] = useState<null | 'groq' | 'ollama'>(null);
-  const [activeReferences, setActiveReferences] = useState<DocumentChunk[] | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
   });
@@ -43,7 +41,6 @@ const App: React.FC = () => {
     setDocumentFileName(file.name);
     setDocumentChunks([]);
     setChatHistory([]);
-    setActiveReferences(null);
     setError(null);
     setAppState(AppState.PARSING);
     await parsePdf(file);
@@ -154,12 +151,10 @@ const App: React.FC = () => {
 
         if (relevantChunks.length === 0) {
             setChatHistory(prev => [...prev, { role: 'model', content: "Não consegui encontrar nenhuma secção relevante no documento para responder à sua pergunta. Tente reformular." }]);
-            setActiveReferences(null);
             setAppState(AppState.READY);
             return;
         }
       
-        setActiveReferences(relevantChunks);
         const context = `CONTEXTO: As seguintes secções foram extraídas do documento:\n\n---\n` +
             relevantChunks.map(chunk => `Secção "${chunk.title}":\n${chunk.content}`).join('\n\n---\n') + `\n---`;
         const historyToConsider = updatedChatHistory.slice(0, -1).slice(-6);
@@ -179,7 +174,6 @@ const App: React.FC = () => {
     setDocumentChunks(chunks);
     setChatHistory([{ role: 'model', content: `Documento "${fileName}" carregado. Pode começar a fazer perguntas.` }]);
     setAppState(AppState.READY);
-    setActiveReferences(null);
     setError(null);
   };
 
@@ -191,7 +185,6 @@ const App: React.FC = () => {
       setDocumentFileName('');
       setDocumentChunks([]);
       setChatHistory([]);
-      setActiveReferences(null);
       setAppState(AppState.INITIAL);
     }
   };
@@ -248,7 +241,7 @@ const App: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen font-sans flex flex-col md:flex-row">
+    <div className="h-screen overflow-hidden font-sans flex flex-col md:flex-row">
       {showSettingsModal === 'groq' && (
         <Modal title="Configurar Chave da API GROQ" onClose={() => setShowSettingsModal(null)}>
           <ApiKeySetup onApiKeySave={handleApiKeySave} currentApiKey={groqApiKey} />
@@ -268,12 +261,11 @@ const App: React.FC = () => {
         onFileUpload={handleFileSelect}
         onProviderChange={handleProviderChange}
         currentProvider={aiProvider}
-        onShowSettings={setShowSettingsModal}
         onThemeToggle={handleThemeToggle}
         theme={theme}
       />
       
-      <main className="flex-1 flex flex-col h-screen">
+      <main className="flex-1 flex flex-col">
         <header className="flex-shrink-0 bg-white/80 dark:bg-slate-950/70 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
@@ -286,7 +278,14 @@ const App: React.FC = () => {
               </div>
             )}
             <div className="flex items-center gap-2">
-              <button onClick={() => setShowSettingsModal(aiProvider)} className="p-2 rounded-full text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" aria-label="Configurar Fornecedor de IA">
+              {/* FIX: The settings modal should not open for 'gemini' provider. This resolves a type error and adds disabled state for better UX. */}
+              <button 
+                onClick={() => { if (aiProvider !== 'gemini') setShowSettingsModal(aiProvider); }} 
+                disabled={aiProvider === 'gemini'}
+                title={aiProvider === 'gemini' ? 'A configuração do Gemini é feita via variáveis de ambiente.' : 'Configurar Fornecedor de IA'}
+                className="p-2 rounded-full text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Configurar Fornecedor de IA"
+              >
                   <CogIcon className="h-5 w-5" />
               </button>
             </div>
@@ -331,17 +330,12 @@ const App: React.FC = () => {
           )}
           
           {isDocumentLoaded && (appState === AppState.READY || appState === AppState.ANSWERING) && (
-             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 h-full p-4 sm:p-6 lg:p-8">
-                 <div className="xl:col-span-2 h-full">
-                     <ChatInterface
-                         messages={chatHistory}
-                         onSendMessage={handleSendMessage}
-                         isLoading={appState === AppState.ANSWERING}
-                     />
-                 </div>
-                 <div className="hidden xl:block xl:col-span-1 h-full overflow-hidden">
-                     <ReferencePanel references={activeReferences} />
-                 </div>
+             <div className="h-full p-4 sm:p-6 lg:p-8">
+                 <ChatInterface
+                     messages={chatHistory}
+                     onSendMessage={handleSendMessage}
+                     isLoading={appState === AppState.ANSWERING}
+                 />
              </div>
           )}
         </div>
