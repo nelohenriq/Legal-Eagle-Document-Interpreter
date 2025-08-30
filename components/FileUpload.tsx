@@ -48,12 +48,12 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect }) => {
     }
   }, [onFileSelect]);
 
-  const dropzoneClass = `flex flex-col items-center justify-center w-full max-w-lg mx-auto p-12 border-2 border-dashed rounded-xl cursor-pointer transition-colors duration-300 ${isDragging ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-slate-300 dark:border-slate-600 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-slate-50 dark:hover:bg-slate-800/50'}`;
+  const dropzoneClass = `relative flex flex-col items-center justify-center w-full max-w-xl mx-auto p-12 border-2 border-dashed rounded-xl cursor-pointer transition-colors duration-300 ${isDragging ? 'border-blue-500 bg-blue-500/10' : 'border-slate-300 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-600 hover:bg-slate-100 dark:hover:bg-slate-900'}`;
   
   return (
-    <div className="text-center py-8 border-t border-slate-200 dark:border-slate-700">
-        <h2 className="text-2xl font-bold mb-2">Ou Analise um Novo Documento</h2>
-        <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto">Carregue um novo ficheiro PDF para o analisar, estruturar e guardar na sua biblioteca.</p>
+    <div className="text-center w-full">
+        <h2 className="text-3xl font-bold mb-2">Comece por Analisar um Documento</h2>
+        <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto">Carregue um ficheiro PDF para o analisar, estruturar e começar a fazer perguntas.</p>
         <div
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
@@ -61,14 +61,14 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect }) => {
             onDrop={handleDrop}
             className={dropzoneClass}
         >
-            <input type="file" id="pdf-upload" className="hidden" accept=".pdf" onChange={handleFileChange} />
-            <label htmlFor="pdf-upload" className="flex flex-col items-center justify-center cursor-pointer">
+            <input type="file" id="pdf-upload" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".pdf" onChange={handleFileChange} />
+            <div className="flex flex-col items-center justify-center pointer-events-none">
                 <UploadCloudIcon className="h-12 w-12 text-slate-400 dark:text-slate-500 mb-4" />
                 <p className="font-semibold text-slate-700 dark:text-slate-300">
                     <span className="text-blue-600 dark:text-blue-500">Clique para carregar</span> ou arraste e largue
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-400">Apenas PDF (máx. 10MB)</p>
-            </label>
+            </div>
         </div>
     </div>
   );

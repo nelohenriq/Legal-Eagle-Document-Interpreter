@@ -13,7 +13,7 @@ const getGeminiClient = (): GoogleGenAI => {
 
   if (!apiKey) {
     // This error will be caught by the calling function in App.tsx
-    throw new Error("A sua chave da API Google GenAI não foi configurada. Por favor, configure a variável de ambiente API_KEY.");
+    throw new Error("A chave de API do Google Gemini não foi encontrada. Por favor, certifique-se de que está configurada corretamente no ambiente do projeto.");
   }
 
   genAI = new GoogleGenAI({ 

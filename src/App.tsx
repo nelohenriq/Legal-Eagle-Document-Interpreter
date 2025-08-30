@@ -268,7 +268,6 @@ const App: React.FC = () => {
         onFileUpload={handleFileSelect}
         onProviderChange={handleProviderChange}
         currentProvider={aiProvider}
-        onShowSettings={setShowSettingsModal}
         onThemeToggle={handleThemeToggle}
         theme={theme}
       />
@@ -286,7 +285,14 @@ const App: React.FC = () => {
               </div>
             )}
             <div className="flex items-center gap-2">
-              <button onClick={() => setShowSettingsModal(aiProvider)} className="p-2 rounded-full text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" aria-label="Configurar Fornecedor de IA">
+              {/* FIX: Disable settings button for Gemini and add a tooltip, as its API key is configured via environment variables. This also fixes a type error where 'gemini' was being passed to a state that only accepts 'groq' or 'ollama'. */}
+              <button 
+                onClick={() => { if (aiProvider !== 'gemini') setShowSettingsModal(aiProvider) }}
+                disabled={aiProvider === 'gemini'}
+                title={aiProvider === 'gemini' ? 'A configuração do Gemini é feita via variáveis de ambiente.' : "Configurar Fornecedor de IA"}
+                className="p-2 rounded-full text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
+                aria-label="Configurar Fornecedor de IA"
+              >
                   <CogIcon className="h-5 w-5" />
               </button>
             </div>

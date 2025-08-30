@@ -62,7 +62,7 @@ export const getInterpretation = async (context: string, question: string, histo
             ...groqHistory,
             { role: "user", content: userPrompt }
         ],
-        model: "llama3-70b-8192",
+        model: "llama-3.3-70b-versatile",
         temperature: 0.7,
      });
 
@@ -97,7 +97,7 @@ export const testConnection = async (apiKey: string): Promise<{ success: boolean
     // Make a very small, cheap request to validate the key
     await testGroq.chat.completions.create({
       messages: [{ role: 'user', content: 'test' }],
-      model: 'llama3-70b-8192',
+      model: 'llama-3.3-70b-versatile',
       max_tokens: 1,
     });
     

@@ -10,14 +10,13 @@ interface SidebarProps {
   onFileUpload: (file: File) => void;
   onProviderChange: (provider: AIProvider) => void;
   currentProvider: AIProvider;
-  onShowSettings: (provider: AIProvider) => void;
   onThemeToggle: () => void;
   theme: 'light' | 'dark';
 }
 
 const DocumentLibrary: React.FC<SidebarProps> = ({ 
   documents, activeDocument, onSelect, onDelete, onFileUpload, 
-  onProviderChange, currentProvider, onShowSettings, onThemeToggle, theme
+  onProviderChange, currentProvider, onThemeToggle, theme
 }) => {
   const documentEntries = Object.entries(documents);
 
